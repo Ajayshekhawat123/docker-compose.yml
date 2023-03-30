@@ -3,31 +3,34 @@ services:
   backend-flask:
     image: ajaysingh31/backend-flask:latest
     environment:
-      FRONTEND_URL: "http://localhost:3000"
-      BACKEND_URL: "http://localhost:4567"
+      FRONTEND_URL: "http://frontend-react-js:3000"
+      BACKEND_URL: "http://backend-flask:4567"
     ports:
       - "4567:4567"
+    networks:
+      - internal-network
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:4567/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
+
   frontend-react-js:
     image: ajaysingh31/frontend-react-js:latest
     environment:
-      REACT_APP_BACKEND_URL: "http://localhost:4567"
+      REACT_APP_BACKEND_URL: "http://backend-flask:4567"
     ports:
       - "3000:3000"
+    networks:
+      - internal-network
     healthcheck:
       test: ["CMD-SHELL", "curl --fail http://localhost:3000/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
 
-
-# the name flag is a hack to change the default prepend folder
-# name when outputting the image names
 networks: 
   internal-network:
     driver: bridge
     name: cruddur
+
